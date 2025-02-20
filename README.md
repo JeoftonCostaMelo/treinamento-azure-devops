@@ -5,3 +5,4 @@ Repositório Template para a Capacitação Interna sobre Azure DevOps
 # testando edição 2
 ## Teste 03
 ## Teste 04
+# Teste 05
