@@ -1,19 +1,49 @@
-# Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
 trigger:
 - master
 
 pool:
   vmImage: ubuntu-22.04
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  buildConfiguration: 'Release'
+  outputFolder: '$(Build.ArtifactStagingDirectory)/publicacao'
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+steps:
+
+# Etapa opcional: conferir versão do .NET
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '8.x'
+    installationPath: $(Agent.ToolsDirectory)/dotnet
+
+# Restaurar dependências
+- task: DotNetCoreCLI@2
+  displayName: 'Restaurar pacotes NuGet'
+  inputs:
+    command: 'restore'
+    projects: '**/*.csproj'
+
+# Build do projeto
+- task: DotNetCoreCLI@2
+  displayName: 'Build do projeto'
+  inputs:
+    command: 'build'
+    projects: '**/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+# Publicação para pasta local
+- task: DotNetCoreCLI@2
+  displayName: 'Publicar aplicação'
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--configuration $(buildConfiguration) --output $(outputFolder)'
+    zipAfterPublish: true
+
+# Publicar como artefato do pipeline
+- task: PublishBuildArtifacts@1
+  displayName: 'Publicar artefato'
+  inputs:
+    PathtoPublish: '$(outputFolder)'
+    ArtifactName: 'ConsultaCepWeb'
