@@ -1,10 +1,23 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Consulta de CEP";
 }
+<h1>Consulta de CEP</h1>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<form method="post">
+    <label for="cep">Digite o CEP:</label>
+    <input type="text" id="cep" name="Cep" value="@Model.Cep"/>
+    <button type="submit">Buscar</button>
+</form>
+
+@if(Model.Endereco != null)
+    {
+    <h2>Endereço encontrado:</h2>
+    <ul>
+        <li><strong>Logradouro: </strong>@Model.Endereco.Logradouro</li>
+        <li><strong>Bairro: </strong>@Model.Endereco.Bairro</li>
+        <li><strong>Cidade: </strong>@Model.Endereco.Localidade</li>
+        <li><strong>UF: </strong>@Model.Endereco.UF</li>
+    </ul>
+    }
